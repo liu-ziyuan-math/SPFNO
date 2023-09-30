@@ -15,7 +15,6 @@ import functools
 import matplotlib
 
 from NOs_dict.models import CosNO_II as Model
-model = Model(initial_step*2+2, modes, width, bandwidth, out_channels=2, dim = 2, triL=triL).to(device)
 
 device = torch.device("cuda")
 data_name = 'diff-react'
@@ -199,6 +198,8 @@ training_type = 'autoregressive'
 t_train = (101 - 1) // sub_t + 1
 myloss = LpLoss(size_average=False)
 loss_fn = myloss
+
+model = Model(initial_step*2+2, modes, width, bandwidth, out_channels=2, dim = 2, triL=triL).to(device)
 
 from Adam import Adam
 optimizer = Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
