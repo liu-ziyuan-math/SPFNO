@@ -12,11 +12,12 @@ import h5py
 from scipy.io import loadmat
 import fourierpack as sp
 import functools
-
 import matplotlib
 
-device = torch.device("cuda:1")
-# device = torch.device("cuda:1")
+from NOs_dict.models import CosNO_II as Model
+model = Model(initial_step*2+2, modes, width, bandwidth, out_channels=2, dim = 2, triL=triL).to(device)
+
+device = torch.device("cuda")
 data_name = 'diff-react'
 
 #### fixing seeds
@@ -29,7 +30,6 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser('Spectral Operator Learning', add_help=False)
 
-    parser.add_argument('--data-dict', default='/home/father/OPNO/data/2D/', type=str, help='dataset folder')
     parser.add_argument('--epochs', default=500, type=int, help='training iterations')
     parser.add_argument('--sub', default=1, type=int, help='sub-sample on the data')
     parser.add_argument('--lr', default=1e-3, type=float, help='learning rate')
@@ -39,11 +39,10 @@ def get_args():
     parser.add_argument('--modes', default=24, type=int, help='Fourier-like modes')
     parser.add_argument('--triL', default=0, type=int, help='')
     parser.add_argument('--suffix', default='', type=str, help='')
-    parser.add_argument('--scdl', default='step', type=str, help='')
+    parser.add_argument('--scdl', default='plat', type=str, help='')
     parser.add_argument('--sub-t', default=1, type=int, help='')
     parser.add_argument('--init-t', default=10, type=int, help='')
     return parser.parse_args()
-
 
 class FNODatasetMult(Dataset):
     def __init__(self, filename,
@@ -127,15 +126,12 @@ class FNODatasetMult(Dataset):
 
         return data[..., ::self.t_step, :][..., :self.initial_step, :], data[..., ::self.t_step, :], grid
 
-import warnings
-warnings.filterwarnings("ignore")
-
 #### parameters settings
 args = get_args()
 
 epochs =  args.epochs  # default 500
-step_size = args.step_size  # for StepLR, default 50
-batch_size = args.batch_size  # default 20
+step_size = args.step_size  # for StepLR, default 100
+batch_size = args.batch_size  # default 5
 sub = args.sub  # default 1
 learning_rate = args.lr  # default 1e-3
 bandwidth = args.bw  # default 1
@@ -151,20 +147,12 @@ weight_decay = 1e-4
 width = 24
 num_workers = 0
 
-if sys.argv[0][:5] == '/home':
-    print('------PYCHARM test--------')
-    bandwidth = 1
-    initial_step = 10
-    sub_t = 1
-    epochs = 0
-    scdl = 'plat'
-
 data_PATH = args.data_dict + data_name + '.h5'
 file_name = 'sp-' + data_name + str(sub) + '-modes' + str(modes) + '-width' + str(width) \
             + '-bw' + str(bandwidth) + '-triL' + str(triL) + '-' + scdl \
             + '-init_t'+ str(initial_step) + '-sub_t' + str(sub_t) + suffix
 # file_name = 'sp-diff-react1-modes24-width24-bw1-triL0step'
-result_PATH = '/home/father/OPNO/model/new/' + file_name + '.pkl'
+result_PATH = args.data_dict + 'model/new/' + file_name + '.pkl'
 
 print('data:', data_PATH)
 print('result_PATH:', result_PATH)
@@ -179,12 +167,6 @@ if os.path.exists(result_PATH):
     print(result_PATH)
 
 ## main
-
-
-## model
-from NOs_dict.models import CosNO2d, CosNO_II
-model = CosNO2d(initial_step*2+2, modes, width, bandwidth, out_channels=2, triL=triL).to(device)
-model = CosNO_II(initial_step*2+2, modes, width, bandwidth, out_channels=2, dim = 2, triL=triL).to(device)
 
 # raw_data = h5py.File(data_PATH, 'r')
 # raw_data['0000'].keys()
