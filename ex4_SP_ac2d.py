@@ -392,7 +392,7 @@ print('test_l2 min-max:', test_err.min().item(), test_err.max().item())
 
 
 
-halt
+exit()
 
 Nx = Ny = 128
 nx = np.linspace(-1, 1, Nx)
