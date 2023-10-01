@@ -39,7 +39,7 @@ def get_args():
     parser.add_argument('--modes', default=24, type=int, help='Fourier-like modes')
     parser.add_argument('--triL', default=0, type=int, help='')
     parser.add_argument('--suffix', default='', type=str, help='')
-    parser.add_argument('--scdl', default='plat', type=str, help='')
+    parser.add_argument('--scdl', default='step', type=str, help='')
     parser.add_argument('--sub-t', default=1, type=int, help='')
     parser.add_argument('--init-t', default=10, type=int, help='')
     return parser.parse_args()
