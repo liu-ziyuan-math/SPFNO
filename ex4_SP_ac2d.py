@@ -29,6 +29,7 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser('Spectral Operator Learning', add_help=False)
 
+    parser.add_argument('--path', default='data/', type=str, help='path for data-dict')
     parser.add_argument('--epochs', default=500, type=int, help='training iterations')
     parser.add_argument('--sub', default=1, type=int, help='sub-sample on the data')
     parser.add_argument('--lr', default=1e-3, type=float, help='learning rate')
@@ -151,7 +152,7 @@ file_name = 'sp-' + data_name + str(sub) + '-modes' + str(modes) + '-width' + st
             + '-bw' + str(bandwidth) + '-triL' + str(triL) + '-' + scdl \
             + '-init_t'+ str(initial_step) + '-sub_t' + str(sub_t) + suffix
 # file_name = 'sp-diff-react1-modes24-width24-bw1-triL0step'
-result_PATH = args.data_dict + 'model/new/' + file_name + '.pkl'
+result_PATH = 'model/' + file_name + '.pkl'
 
 print('data:', data_PATH)
 print('result_PATH:', result_PATH)
