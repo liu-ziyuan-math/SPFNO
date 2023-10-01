@@ -1,6 +1,3 @@
-"""
-This code is written by Ziyuan Liu, you may contact us through liuziyuan17@nudt.edu.cn
-"""
 import os
 import sys
 sys.path.append("..")
@@ -14,9 +11,9 @@ import fourierpack as sp
 import functools
 
 import matplotlib
+from NOs_dict.models import CosNO1d as Model
 
-# device = torch.device("cuda:0")
-device = torch.device("cuda:1")
+device = torch.device("cuda")
 data_name = 'burgers_neumann'
 
 #### fixing seeds
@@ -30,12 +27,12 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser('Spectral Operator Learning', add_help=False)
 
-    parser.add_argument('--data-dict', default='/home/father/OPNO/data/', type=str, help='dataset folder')
+    parser.add_argument('--data-dict', default='data/', type=str, help='dataset folder')
     parser.add_argument('--data-name', default='burgers_neumann.m', type=str, help='dataset name')
     parser.add_argument('--epochs', default=5000, type=int, help='training iterations')
     parser.add_argument('--sub', default=1, type=int, help='sub-sample on the data')
     parser.add_argument('--lr', default=1e-3, type=float, help='learning rate')
-    parser.add_argument('--bw', default=1, type=int, help='band width')
+    parser.add_argument('--bw', default=4, type=int, help='band width')
     parser.add_argument('--batch-size', default=20, type=int, help='batch size')
     parser.add_argument('--step-size', default=500, type=int, help='step size for the StepLR (if used)')
     parser.add_argument('--modes', default=20, type=int, help='Fourier-like modes')
@@ -65,16 +62,9 @@ train_size, test_size = 1000, 100
 width = 50
 num_workers = 0
 
-#pycharm
-if sys.argv[0][:5] == '/home':
-    print('------PYCHARM test--------')
-    sub = 1
-    bandwidth = 4
-    epochs = 0
-
 data_PATH = args.data_dict + data_name + '.mat'
 file_name = 'sp-' + data_name + str(sub)  + '-modes' + str(modes)  + '-width' + str(width) + '-bw' + str(bandwidth) + '-triL' + str(triL)  + '-' + scdl + suffix
-result_PATH = '/home/father/OPNO/model/new/' + file_name + '.pkl'
+result_PATH = 'model/' + file_name + '.pkl'
 
 if os.path.exists(result_PATH):
     print("-"*40+"\nWarning: pre-trained model already exists:\n"+result_PATH+"\n"+"-"*40)
@@ -102,16 +92,14 @@ test_loader = torch.utils.data.DataLoader(
         batch_size=batch_size, shuffle=False)
 
 ## model
-from NOs_dict.models import CosNO1d
 
-model = CosNO1d(2, modes, width, bandwidth, triL=triL).to(device).double()
+model = Model(2, modes, width, bandwidth, triL=triL).to(device).double()
 
 if epochs == 0:  # load model
     print('pretrained model:' + result_PATH + ' loaded!')
     loader = torch.load(result_PATH)
     model.load_state_dict(loader['model'])
     loss_list = loader['loss_list']
-    print(loader['loss_list'][-1])
 print('model parameters number =', count_params(model))
 
 ## training
