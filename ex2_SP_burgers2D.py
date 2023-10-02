@@ -1,9 +1,4 @@
-"""
-This code is written by Ziyuan Liu, you may contact us through liuziyuan17@nudt.edu.cn
-"""
 import os
-import sys
-sys.path.append("..")
 from torch.utils.data import DataLoader
 from timeit import default_timer
 from utilities import *
@@ -12,10 +7,10 @@ import h5py
 from scipy.io import loadmat
 import fourierpack as sp
 import functools
+from NOs_dict.models import CosNO2d as Model
 
 import matplotlib
 
-# device = torch.device("cuda:0")
 device = torch.device("cuda")
 data_name = 'burgers2d'
 
@@ -61,19 +56,7 @@ gamma = 0.5  # for StepLR
 weight_decay = 1e-4
 train_size, test_size = 1000, 100
 width = 24
-num_workers = 1
-
-#pycharm
-if sys.argv[0][:5] == '/home':
-    print('------PYCHARM test--------')
-    bandwidth = 5
-    sub = 4
-    epochs = 0
-
-    bandwidth = 4
-    sub = 4
-    epochs = 500
-    scdl = 'plat'
+num_workers = 0
 
 data_PATH = args.data_dict + data_name + '.mat'
 file_name = 'sp-' + data_name + str(sub) + '-modes' + str(modes) + '-width' + str(width) + \
@@ -95,8 +78,7 @@ if os.path.exists(result_PATH):
 ## main
 
 ## model
-from NOs_dict.models import CosNO2d
-model = CosNO2d(3, modes, width, bandwidth, out_channels=3, triL=triL).double().to(device)
+model = Model(3, modes, width, bandwidth, out_channels=3, triL=triL).double().to(device)
 
 ntrain, ntest = train_size, test_size
 raw_data = h5py.File(data_PATH, 'r')
