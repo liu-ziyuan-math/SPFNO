@@ -1,6 +1,3 @@
-"""
-This code is written by Ziyuan Liu, you may contact us through liuziyuan17@nudt.edu.cn
-"""
 import os
 import sys
 sys.path.append("..")
