@@ -216,19 +216,16 @@ X, Y = np.meshgrid(nx, ny)
 i = 0
 test_loader = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(x_test, y_test), batch_size=ntest,
                                           shuffle=False)
-# xx = x_train[i:i+batch_size, :, :].to(device)
 xx, y = next(iter(test_loader))
 xx = xx.to(device)
 yy = model(xx).reshape(ntest, Nx, Ny, -1)
 
-# yy = y_normalizer.decode(yy)
 yy = yy.detach().to('cpu')
 
 # y = y_data[i:i+batch_size, :]
 j = -1
 
 j += 1
-# fig = plt.figure()
 plt.cla()
 for t in range(3):
     plt.subplot(3, 3, 1+t)
@@ -241,25 +238,3 @@ for t in range(3):
     plt.pcolor(X, Y, (y[j, ..., t]-yy[j, ..., t]).cpu(), cmap="jet")
     plt.colorbar()
 plt.show()
-
-
-# plt.subplot(3, 3, 1)
-# plt.pcolor(X, Y, yy[j, ..., -1].cpu(), cmap="jet")
-# plt.colorbar()
-# plt.subplot(3, 3, 2)
-# plt.pcolor(X, Y, yy[j, ..., -1].cpu(), cmap="jet")
-# plt.colorbar()
-#
-# plt.subplot(3, 2, 3)
-# plt.pcolor(X, Y, yy[j, ..., 1].cpu(), cmap="jet")
-# plt.colorbar()
-# plt.subplot(3, 2, 4)
-# plt.pcolor(X, Y, yy[j, ..., 1].cpu(), cmap="jet")
-# plt.colorbar()
-# plt.subplot(3, 2, 5)
-# plt.pcolor(X, Y, y[j, ..., 2].cpu(), cmap="jet")
-# plt.colorbar()
-# plt.subplot(3, 2, 6)
-# plt.pcolor(X, Y, y[j, ..., 2].cpu(), cmap="jet")
-# plt.colorbar()
-# plt.show()
