@@ -8,6 +8,7 @@ from scipy.io import loadmat
 import fourierpack as sp
 import functools
 import matplotlib
+from NOs_dict.models import SinNO2d as Model
 
 device = torch.device("cuda")
 data_name = 'darcy-bench'
@@ -82,8 +83,7 @@ if os.path.exists(result_PATH):
 ## main
 
 ## model
-from NOs_dict.models import SinNO2d
-model = SinNO2d(3, modes, width, bandwidth, triL=triL, skip=sol_skipflag).to(device)
+model = Model(3, modes, width, bandwidth, triL=triL, skip=sol_skipflag).to(device)
 
 ntrain, ntest = train_size, test_size
 raw_data = h5py.File(data_PATH, 'r')
@@ -200,7 +200,7 @@ with torch.no_grad():
     for x, y in test_loader:
         x, y = x.to(device), y.to(device)
 
-        out = model(x).reshape(batch_size, s, s)[..., 1:-1, 1:-1]
+        out = model(x).reshape(batch_size, s, s)[..., 1:-1, 1:-1] # remove BC
         test_err = torch.cat([test_err,
                               peer_loss(out.reshape(batch_size, -1), y.reshape(batch_size, -1))],
                              dim=0)
