@@ -1,10 +1,10 @@
 # Technical details for SPFNO: SPECTRAL OPERATER LEARNING FOR PDES WITH DIRICHLET AND NEUMANN BOUNDARY CONDITIONS
 
-Generally speaking, we follow the following criterion when selecting hyperparameters for benchmark:
+Generally speaking, we follow the criterion when selecting hyperparameters:
 
-1. If the hyperparameters have been given by the original paper, we will follow them if possible, e.g., LSM and Unet. Please refer to the source column(`src`).
+1. If the hyperparameters have been given by the original paper, we follow them if possible, e.g., LSM and Unet. Please refer to the source column(`src`).
 2. If the strucutre is similar, choose the same `modes` and `width`. For example, FNO, OPNO, and SPFNO are all based on spectral method.
-3. The amount of parameters and time consumption are compatible so that the comparison is fair.
+3. The amount of learnable parameters and time consumption should be compatible so that the comparison is fair.
 
 ## Example 1: 1D Burgers
 Under the instrcution of paper [OPNO](https://github.com/liu-ziyuan-math/spectral_operator_learning) : 
