@@ -1,6 +1,4 @@
 import os
-import sys
-sys.path.append("..")
 from torch.utils.data import DataLoader
 from timeit import default_timer
 from utilities import *
