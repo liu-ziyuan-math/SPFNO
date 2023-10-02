@@ -1,6 +1,4 @@
 import os
-import sys
-sys.path.append("..")
 from torch.utils.data import Dataset, DataLoader
 from timeit import default_timer
 from utilities import *
@@ -332,13 +330,6 @@ if epochs >= 200:
         'weight_decay': weight_decay, 'width': width, 'modes': modes, 'sub': sub,
         'loss_list': loss_list, 'train_list': train_list
     }, result_PATH)
-
-
-
-j = -1
-
-
-j = -1
 
 peer_loss = LpLoss(reduction=False)
 test_err = torch.tensor([])
