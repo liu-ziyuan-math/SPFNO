@@ -1,6 +1,4 @@
 import os
-import sys
-sys.path.append("..")
 from torch.utils.data import DataLoader
 from timeit import default_timer
 from utilities import *
@@ -11,7 +9,7 @@ import fourierpack as sp
 import functools
 import matplotlib
 
-device = torch.device("cuda:1")
+device = torch.device("cuda")
 data_name = 'darcy-bench'
 
 #### fixing seeds
@@ -25,7 +23,7 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser('Spectral Operator Learning', add_help=False)
 
-    parser.add_argument('--data-dict', default='/home/father/OPNO/data/2D/DarcyFlow/', type=str, help='dataset folder')
+    parser.add_argument('--data-dict', default='data/', type=str, help='dataset folder')
     parser.add_argument('--data-para', default='100.0', type=str, help='dataset parameter beta')
     parser.add_argument('--epochs', default=500, type=int, help='training iterations')
     parser.add_argument('--sub', default=1, type=int, help='sub-sample on the data')
@@ -64,20 +62,11 @@ train_size, test_size = 9000, 1000
 num_workers = 0
 suffix = suffix + '-plat'
 
-# pycharm
-if sys.argv[0][:5] == '/home':
-    print('------PYCHARM test--------')
-    # fea = 1
-    # epochs = 0
-    # pred_times = 1
-
 beta = args.data_para
 data_PATH = args.data_dict + '2D_DarcyFlow_beta' + beta + '_Train.hdf5'
-# file_name = 'sp-' + data_name + str(sub) + '-beta' + beta + '-modes' + str(modes) + '-width' + str(width) + '-triL' + str(triL) + suffix #+ suffix
 file_name = 'sp-' + data_name + str(sub) + '-beta' + beta + '-modes' + str(modes) + '-width' + str(width) \
             + '-bw' + str(bandwidth)+ '-triL' + str(triL) + '-wd' + str(wd) + suffix
-result_PATH = '/home/father/OPNO/model/new/' + file_name + '.pkl'
-
+result_PATH = 'model/' + file_name + '.pkl'
 
 print('data:', data_PATH)
 print('result_PATH:', result_PATH)
@@ -85,7 +74,6 @@ print('batch_size', batch_size, 'learning_rate', learning_rate, 'epochs', epochs
 print('weight_decay', weight_decay, 'width', width, 'modes', modes, 'sub', sub, 'triL', triL)
 
 import os
-
 
 if os.path.exists(result_PATH):
     print("----------Warning: pre-trained model already exists:")
@@ -114,11 +102,6 @@ s = Nx
 
 x_train = x_train.reshape(ntrain, s, s, 1)
 x_test = x_test.reshape(ntest, s, s, 1)
-# du_train, du_test = Dx(x_train, [1, 2]), Dx(x_test, [1, 2])
-# du_test[:, (0, -1), ...] = du_test[..., (0, -1), :] = 0;
-# du_train[:, (0, -1), ...] = du_train[..., (0, -1), :] = 0
-# du_test /= (du_train.abs().max() + 1e-7);
-# du_train /= (du_train.abs().max() + 1e-7)
 
 grid_x = torch.linspace(0, 1, Nx, dtype=torch.float32).view(1, Nx, 1, 1)
 grid_y = torch.linspace(0, 1, Ny, dtype=torch.float32).view(1, 1, Ny, 1)
@@ -146,7 +129,6 @@ if epochs == 0:  # load model
     model.load_state_dict(loader['model'])
     print('test_l2:', loader['loss_list'][-1])
     loss_list = loader['loss_list']
-    # peer_err = loader['test_err']
 print('model parameters number =', count_params(model))
 
 # optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
@@ -206,7 +188,7 @@ if epochs >= 500:
         'loss_list': loss_list, 'train_list': train_list
     }, result_PATH)
 
-halt
+exit()
 
 j = -1
 x_unif = torch.linspace(0, 1, Nx)[1:-1]
@@ -224,90 +206,3 @@ with torch.no_grad():
                              dim=0)
 print('test_l2', test_err.sum().item() / test_size)
 print('test_l2 min-max:', test_err.min().item(), test_err.max().item())
-
-
-j = test_err.argmax()
-
-# j += 1
-plt.cla()
-x_ref, y_ref = x_test[j:j+1, ...], y_test[j, ...]
-y_pred = model(x_ref.to(device)).detach().cpu()[0, 1:-1, 1:-1, 0]
-fig, axs = plt.subplots(2, 2, num=0, clear=True)
-im = axs[0][0].contourf(X, Y, y_ref, cmap=plt.get_cmap('Spectral'))
-fig.colorbar(im, ax=axs[0, 0])
-im = axs[0][1].contourf(X, Y, y_pred.resolve_neg().numpy(), cmap=plt.get_cmap('Spectral'))
-fig.colorbar(im, ax=axs[0, 1])
-im = axs[1][0].contourf(X, Y, y_pred- y_ref, cmap=plt.get_cmap('Spectral'))
-fig.colorbar(im, ax=axs[1, 0])
-im = axs[1][1].contourf(X, Y, x_ref[0, 1:-1, 1:-1, 0], cmap=plt.get_cmap('Spectral'))
-fig.colorbar(im, ax=axs[1, 1])
-axs[0][0].set_axis_off()
-axs[0][1].set_axis_off()
-axs[1][0].set_axis_off()
-axs[1][1].set_axis_off()
-print(test_err[j])
-plt.show()
-#
-plt.cla()
-# j += 1
-# j=356
-x_ref, y_ref = x_test[j:j+1, ...], y_test[j, ...]
-y_pred = model(x_test.to(device)).detach().cpu()[:, 1:-1, 1:-1, 0]
-fig, axs = plt.subplots(2, 2, num=0, clear=True)
-im = axs[0, 0].imshow(y_ref)
-fig.colorbar(im, ax=axs[0, 0])
-im = axs[0, 1].imshow(y_pred)
-fig.colorbar(im, ax=axs[0, 1])
-im = axs[1, 0].imshow(y_pred - y_ref)
-fig.colorbar(im, ax=axs[1, 0])
-im = axs[1, 1].imshow(x_ref[j, 1:-1, 1:-1, 0])
-fig.colorbar(im, ax=axs[1, 1])
-axs[0][0].set_axis_off()
-axs[0][1].set_axis_off()
-axs[1][0].set_axis_off()
-axs[1][1].set_axis_off()
-plt.show()
-#
-# plt.cla()
-# j += 1
-# fig, axs = plt.subplots(2, 3, num=0, clear=True)
-# im = axs[0][0].contourf(X, Y, y_test[j, ...], cmap=plt.get_cmap('Spectral'))
-# fig.colorbar(im, ax=axs[0, 0])
-# im = axs[0][1].contourf(X, Y, yy[j, ...], cmap=plt.get_cmap('Spectral'))
-# fig.colorbar(im, ax=axs[0, 1])
-# im = axs[1][0].contourf(X, Y, yy[j, ...] - y_test[j, ...], cmap=plt.get_cmap('Spectral'))
-# fig.colorbar(im, ax=axs[1, 0])
-# im = axs[1][1].contourf(X, Y, x_test[j, ..., 1], cmap=plt.get_cmap('Spectral'))
-# fig.colorbar(im, ax=axs[1, 1])
-# im = axs[1][2].contourf(X, Y, x_test[j, ..., 0], cmap=plt.get_cmap('Spectral'))
-# fig.colorbar(im, ax=axs[1, 2])
-# axs[0][0].set_axis_off()
-# axs[0][1].set_axis_off()
-# axs[1][0].set_axis_off()
-# axs[1][1].set_axis_off()
-# plt.show()
-
-
-halt
-
-
-obj = model.conv0.weights.abs().cpu().detach().numpy().reshape(width, width, modes, modes)
-obj = obj.reshape(-1, modes, modes)
-stat = np.sum(obj, axis=0)
-
-sli = model.conv1.weights[31, 20].reshape(24, 24).abs()
-sli = stat
-plt.imshow(sli)
-plt.colorbar()
-plt.show()
-
-plt.imshow(model.T(y_pred, dim=[0, 1]))
-plt.colorbar()
-plt.show()
-
-x_ref, y_ref = x_test[j:j + 1, ...], y_test[j, ...]
-
-
-
-stat, _ = model.T(y_train, dim=[-2, -1]).abs().max(dim=0)
-plt.imshow(stat)
