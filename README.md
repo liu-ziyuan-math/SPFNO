@@ -32,6 +32,8 @@ using Adam optimizer to train for `3000 epochs` with an initial `learning rate o
 | OPNO  | 24    | 16    | 3         | 5.5m   | [OPNO](https://github.com/liu-ziyuan-math/spectral_operator_learning) |
 | SPFNO | 24    | 16    | 4         | 9.7m  |   |
 
+For LSM, case of width=32 outperforms that of width=64.
+
 ## Example 3: 2D Reaction-Diffusion(Allen Cahn)
 Under the instrcution of [PDEBench](https://github.com/pdebench/PDEBench/blob/main/pdebench/models/config/args/config_diff-react.yaml)
 
