@@ -39,10 +39,10 @@ using Adam optimizer to train for `500 epochs` with an initial `learning rate of
 
 |       | width | modes | bandwidth | #Param | #src |
 |-------|-------|-------|-----------|--------|---|
-| FNO   | 32    | 12x2  | 1         | 1.3m  | [OPNO](https://github.com/liu-ziyuan-math/spectral_operator_learning) |
+| FNO   | 24    | 12x2  | 1         | 1.3m  | [OPNO](https://github.com/liu-ziyuan-math/spectral_operator_learning) |
 | Unet  | -     | -     | -         | 7.8m   | [PDEBench](https://github.com/pdebench/PDEBench) |
 | LSM   | 16    | 12    | -         | 1.2m   | [LSM](https://github.com/thuml/Latent-Spectral-Models) |
-| SPFNO | 32    | 24    | 1         | 1.4m  |   |
+| SPFNO | 24    | 24    | 1         | 1.4m  |   |
 
 - For LSM, case of width=16 outperforms that of width=32; when width=64, an "out of memory" error is reported on A100 80G.
 
@@ -55,7 +55,7 @@ Under the instruction of [PDEBench](https://github.com/pdebench/PDEBench/blob/ma
 
 |       | width | modes | bandwidth | #Param | #src |
 |-------|-------|-------|-----------|--------|---|
-| FNO   | 24    | 12x2  | 1         | 2.4m  | [OPNO](https://github.com/liu-ziyuan-math/spectral_operator_learning) |
+| FNO   | 32    | 12x2  | 1         | 2.4m  | [OPNO](https://github.com/liu-ziyuan-math/spectral_operator_learning) |
 | Unet  | -     | -     | -         | 7.8m   | [PDEBench](https://github.com/pdebench/PDEBench) |
 | LSM   | 64    | 12    | -         | 19.2m   | [LSM](https://github.com/thuml/Latent-Spectral-Models) |
-| SPFNO | 24    | 24    | 1         | 2.4m  |   |
+| SPFNO | 32    | 24    | 1         | 2.4m  |   |
