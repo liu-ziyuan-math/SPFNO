@@ -55,7 +55,7 @@ Under the instruction of [PDEBench](https://github.com/pdebench/PDEBench/blob/ma
 
 |       | width | modes | bandwidth | #Param | #src |
 |-------|-------|-------|-----------|--------|---|
-| FNO   | 32    | 12x2  | 1         | 2.4m  | [OPNO](https://github.com/liu-ziyuan-math/spectral_operator_learning) |
+| FNO   | 24    | 12x2  | 1         | 2.4m  | [OPNO](https://github.com/liu-ziyuan-math/spectral_operator_learning) |
 | Unet  | -     | -     | -         | 7.8m   | [PDEBench](https://github.com/pdebench/PDEBench) |
 | LSM   | 64    | 12    | -         | 19.2m   | [LSM](https://github.com/thuml/Latent-Spectral-Models) |
-| SPFNO | 32    | 24    | 1         | 2.4m  |   |
+| SPFNO | 24    | 24    | 1         | 2.4m  |   |
