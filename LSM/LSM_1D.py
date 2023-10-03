@@ -1,5 +1,6 @@
 """
 @author: Haixu Wu
+Slightly modified by us for 1D cases
 """
 import torch.nn.functional as F
 import torch.nn as nn
